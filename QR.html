@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>QR Code Redirect</title>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+</head>
+<body>
+    <h2>Scan the QR Code</h2>
+    <div id="qrcode"></div>
+    
+    <script>
+        // Define app store URLs
+        const androidURL = "https://play.google.com/store/apps/details?id=your.android.app";
+        const iosURL = "https://apps.apple.com/app/idyouriosappid";
+        const defaultURL = "https://www.yourwebsite.com";
+
+        // Function to detect OS
+        function getMobileOS() {
+            const userAgent = navigator.userAgent || navigator.vendor || window.opera;
+            if (/iPad|iPhone|iPod/.test(userAgent) && !window.MSStream) {
+                return "iOS";
+            } else if (/android/i.test(userAgent)) {
+                return "Android";
+            }
+            return "Other";
+        }
+        
+        // Redirect based on OS
+        function redirectToStore() {
+            const os = getMobileOS();
+            if (os === "Android") {
+                window.location.href = androidURL;
+            } else if (os === "iOS") {
+                window.location.href = iosURL;
+            } else {
+                window.location.href = defaultURL;
+            }
+        }
+
+        // Generate QR Code with redirection link
+        new QRCode(document.getElementById("qrcode"), {
+            text: window.location.origin + window.location.pathname + "?redirect=true",
+            width: 200,
+            height: 200
+        });
+
+        // Handle redirect if user accessed the page via QR code
+        const urlParams = new URLSearchParams(window.location.search);
+        if (urlParams.has("redirect")) {
+            redirectToStore();
+        }
+    </script>
+</body>
+</html>
